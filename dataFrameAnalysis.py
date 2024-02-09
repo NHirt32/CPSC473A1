@@ -1,63 +1,98 @@
 import pandas as pd
 
-quarter_dict = {'Mar': 'Q1', 'Jun': 'Q2', 'Sep': 'Q3', 'Dec': 'Q4'}
+forecastList = []
 
 def dataRead():
     dfFiscal = pd.read_csv('CPSC473A1Dataset.csv')
     dfFiscal.dropna(how='all', inplace=True)
     return dfFiscal
 
-def quarterAnalysis(dfFiscal):
-    usedAvg = 0
-    lentAvg = 0
+def periodSplit(dfFiscal, period):
+    valueAvg = 0
     rowIndex = 0
-    dfQuarter = pd.DataFrame(columns=('Quarter + Year', 'Amount_Used', 'Amount_Lent'))
+    dfPeriod = pd.DataFrame(columns=('Year', 'Value'))
 
     while rowIndex < len(dfFiscal):
 
-        usedAvg += dfFiscal['Amount_Used'].iloc[rowIndex]
-        lentAvg += dfFiscal['Amount_Lent'].iloc[rowIndex]
+        valueAvg += dfFiscal['Value'].iloc[rowIndex]
+        aggregateSum = 12 / period
 
         # Taking the average of every 3 rows to create quarters
-        if (rowIndex+1) % 3 == 0:
+        if (rowIndex+1) % aggregateSum == 0:
             dateValues = dfFiscal['Date'].astype(str).iloc[rowIndex]
-            currentQuarter = quarter_dict[f"{dateValues[0]}{dateValues[1]}{dateValues[2]}"]
-            currentYear = f"{dateValues[4]}{dateValues[5]}"
-            quarterYear = f"{currentQuarter}-{currentYear}"
-
-            dfQuarter.loc[len(dfQuarter.index)] = [quarterYear, usedAvg, lentAvg]
+            dfPeriod.loc[len(dfPeriod.index)] = [dateValues, valueAvg]
             # Resetting used and lent amounts for future quarterly calculations
-            usedAvg = 0
-            lentAvg = 0
+            valueAvg = 0
 
         rowIndex += 1
+    return dfPeriod
 
-    return dfQuarter
-
-def dataPreprocess():
+def dataPreprocess(period):
     dfFiscal = dataRead()
-    dfQuarter = quarterAnalysis(dfFiscal)
-    return dfFiscal
+    dfPeriod = periodSplit(dfFiscal, period)
+    return dfPeriod
 
-def movingAverage(dfQuarter):
-    rowCount = len(dfQuarter)
-    currRow = 0
-    totalUsed = 0
-    totalLent = 0
+def movingAverage(dfPeriod, year, period):
+    rowCount = len(dfPeriod)
+    sum = 0
+    valueList = dfPeriod['Value'].tolist()
 
-    while currRow < rowCount:
-        totalUsed += dfQuarter['Amount_Used'].iloc[currRow]
-        totalLent += dfQuarter['Amount_Lent'].iloc[currRow]
-        currRow += 1
+    for value in  valueList:
+        sum += value
 
-    avgUsed = totalUsed / rowCount
-    avgLent = totalLent / rowCount
+    avg = sum / rowCount
+    newRow = {'Year': year, 'Value': avg}
+    forecastList.append(f"<{year}, {period}, {avg}>")
+    dfPeriod.loc[rowCount] = newRow
+    return dfPeriod
 
-    return avgUsed, avgLent
+def forecast(dfPeriod, forecastYears, period):
+    forecastPeriods = forecastYears * period
+    while forecastPeriods > 0:
+        currYear = dfPeriod['Year'].iloc[-1]
+        yearCount = (dfPeriod['Year'] == currYear).sum()
+        if yearCount == period:
+            currYear = int(currYear) + 1
+            yearCount = 0
+        dfPeriod = movingAverage(dfPeriod, currYear, yearCount+1)
+        forecastPeriods -= 1
 
-def dataAnalysis():
-    dfQuarter = dataPreprocess()
-    avgUsed, avgLent = movingAverage(dfQuarter)
+    return dfPeriod
 
-    return avgUsed, avgLent
+def rSquared(dfPeriod, slope, intercept):
+    rowCount = len(dfPeriod)
+    sum = 0
+    valueList = dfPeriod['Value'].tolist()
+
+    for value in valueList:
+        sum += value
+
+    avg = sum / rowCount
+
+    sumOfSquares = 0
+
+    for value in valueList:
+        sumOfSquares += (value - avg)**2
+
+    
+
+def graphAnalysis(dfPeriod):
+    rise = dfPeriod['Value'].iloc[-1] - dfPeriod['Value'].iloc[0]
+    run = len(dfPeriod) - 1
+    slope = rise/run
+    intercept = dfPeriod['Value'].iloc[0] - slope
+    print(intercept)
+    return 0
+
+def dataAnalysis(period, forecastYears):
+    if 12 % period == 0:
+        dfPeriod = dataPreprocess(period)
+        forecast(dfPeriod, forecastYears, period)
+        graphAnalysis(dfPeriod)
+        print(forecastList)
+    else:
+        print("Invalid period (Indivisible)")
+        exit(1)
+
+    return forecastList
 

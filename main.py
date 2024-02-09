@@ -1,4 +1,4 @@
 import userInput as ui
 import dataFrameAnalysis as dfa
-avgUsed, avgLent = dfa.dataAnalysis()
-print(avgUsed)
+output = dfa.dataAnalysis(3, 2)
+# print(avgUsed)
