@@ -1,12 +1,12 @@
-#CPSC 473 A1
+# CPSC 473 A1
 
-##Description:
+## Description:
 This Python project's goal is to take in a CSV file, utilize moving average to forecast trends, and analyze core graph features.
 
-##Requirements
+## Requirements
 This project requires an installation of Python as well as Pandas.
 
-##Usage:
+## Usage:
 Navigate to your local folder that contains the project files and run the following command:
 python main.py CSVFILENAME.csv PERIOD(int) FORECASTYEARS(int)
 Please note that your CSV files first column needs to be named 'Date' and the second value needs to be named 'Value' with corresponding values in their appropriate columns.
@@ -27,15 +27,15 @@ Date, Value
 2019,48
 2019,50
 
-##File Structure:
-###main.py:
+## File Structure:
+### main.py:
 This file contains calls to all seperated functionality and contains the setting of the output file's name
 
-###userInput.py:
+### userInput.py:
 This file has a singular function that analyzes user input from a terminal call and passes these forward to the rest of the program.
 
-###dataFrameAnalysis.py:
+### dataFrameAnalysis.py:
 This file is composed of many different functions and is responsible for all forecasting and regression. The entry point to this functionality is the dataAnalysis function.
 
-###output.py:
+### output.py:
 This file contains two functions which both print our forecasting and analysis results to the user as well as saves the forecasted predictions to a txt file.
