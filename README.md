@@ -12,20 +12,20 @@ python main.py CSVFILENAME.csv PERIOD(int) FORECASTYEARS(int)
 Please note that your CSV files first column needs to be named 'Date' and the second value needs to be named 'Value' with corresponding values in their appropriate columns.
 Additionally, your 'Date' column needs to be appropriately divided into a monthly basis where each entry is simply referred to by the year it is in.
 The program will divide these up such that each period is appropriately divided.
-Below you can see an example of what columns should look like in your file for an individual year:
-Date, Value
-2019,41
-2019,42
-2019,41
-2019,45
-2019,40
-2019,47
-2019,48
-2019,45
-2019,43
-2019,41
-2019,48
-2019,50
+Below you can see an example of what columns should look like in your file for an individual year:<br>
+Date, Value<br>
+2019,41<br>
+2019,42<br>
+2019,41<br>
+2019,45<br>
+2019,40<br>
+2019,47<br>
+2019,48<br>
+2019,45<br>
+2019,43<br>
+2019,41<br>
+2019,48<br>
+2019,50<br>
 
 ## File Structure:
 ### main.py:
