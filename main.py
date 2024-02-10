@@ -1,4 +1,12 @@
 import userInput as ui
 import dataFrameAnalysis as dfa
-output = dfa.dataAnalysis(3, 2)
-# print(avgUsed)
+import output
+
+outputFileName = "ForecastingResult.txt"
+
+inputFileName, period, forecastYears = ui.userInput()
+
+analysisValues, forecastValues = dfa.dataAnalysis(inputFileName, period, forecastYears)
+
+output.printOutput(analysisValues, forecastValues)
+output.fileOutput(forecastValues, outputFileName)
